@@ -1,3 +1,4 @@
+import util
 import copy
 import numpy as np
 
@@ -6,10 +7,8 @@ def spatial_filter(img, filter):
         Apply a filter to an image.
     """
 
-    m = len(img)
-    n = len(img[0])
-    u = len(filter)
-    v = len(filter[0])
+    m,n=util.matrix_dimensions(img)
+    u,v=util.matrix_dimensions(filter)
     new_img = copy.deepcopy(img)
 
     if u % 2 == 0 or v % 2 == 0:
@@ -33,14 +32,13 @@ def smoothing_filter(img, filter_size = 3):
         Apply a smoothing filter to an image.
     """
     smoothing = np.ones((filter_size, filter_size))
-    copy_matrix(img, spatial_filter(img, smoothing))
+    util.copy_matrix(img, spatial_filter(img, smoothing))
 
 def sharpening_filter(img):
     """
         Apply a sharpening filter to an image.
     """
-    m = len(img)
-    n = len(img[0])
+    m, n  = util.matrix_dimensions()
     sharpening = [[0, -1, 0], [-1, 4, -1], [0, -1, 0]]
     laplacian = spatial_filter(img, sharpening)
 
@@ -53,11 +51,4 @@ def edge_detection_filter(img):
         Apply an edge detection filter to an image.
     """
     edge_detection = [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
-    copy_matrix(img, spatial_filter(img, edge_detection))
-
-def copy_matrix(target, source):
-    m = len(source)
-    n = len(source[0])
-    for i in range(m):
-        for j in range(n):
-            target[i][j] = source[i][j]
+    util.copy_matrix(img, spatial_filter(img, edge_detection))

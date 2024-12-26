@@ -1,17 +1,33 @@
-def reduce_gaussian_noise(img):
-    """
-        Reduce Gaussian noise from an image.
-    """
-    return img
+import numpy as np
+import util
 
-def reduce_salt_pepper_noise(img):
-    """
-        Reduce salt and pepper noise from an image.
-    """
-    return img
+def add_random_noise(img, stddev):
+    m, n  = util.matrix_dimensions(img)
+    for i in range(m):
+        for j in range(n):
+            l = np.random.normal(loc=img[i][j], scale=stddev)
+            if l > 255:
+                l = 255
+            if l < 0:
+                l = 0
 
-def reduce_noise_of_by_size(img, size):
+            img[i][j] = l
+
+def reduce_gaussian_noise(imgs):
     """
-        Reduce noise of a certain size from an image.
+    Uses a set of noisy images to find the ground truth image.
     """
-    return img
+    m, n = util.matrix_dimensions(imgs[0])
+    k = len(imgs)
+    for i in range(1, k):
+        if util.matrix_dimensions(imgs[i]) != (m,n):
+            raise Exception("Not all images are the same size.")
+        
+    truth_img = np.zeros((m, n))
+
+    for img in imgs:
+        for i in range(m):
+            for j in range(n):
+                truth_img[i][j] += img[i][j] // k
+    
+    return truth_img
